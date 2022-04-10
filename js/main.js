@@ -17,7 +17,7 @@ function setlist(list){
      for (var key in list){
         table += '<tr><td>'+ 
         formatdesc(list[key].desc) +
-        '</td><td>'+ list[key].amount+'</td><td>'+ formatvalue(list[key].value )+
+        '</td><td>'+formatAmount(list[key].amount) +'</td><td>'+ formatvalue(list[key].value )+
         '</td><td><button class="btn btn-default" onclick="setUpdate('+key+');">edit</button>  <button class="btn btn-default" onclick="deleteData('+key+');">delete</button></td></tr><tr>';
      }
      table += '</tbody';
@@ -29,6 +29,9 @@ function formatdesc(desc){
     str = str.charAt(0).toUpperCase() + str.slice(1);
     return str;
 }
+    function  formatAmount(amount){
+        return parseInt (amount);
+    }
 
 function  formatvalue(value){
     var str = parseFloat(value).toFixed(2) + "";
@@ -38,13 +41,15 @@ function  formatvalue(value){
 }
 
 function addData(){
+    if(!validation()){
+        return;
+    }
     var desc = document.getElementById("desc").value;
     var amount = document.getElementById("amount").value;
     var value = document.getElementById("value").value;
     list.unshift({"desc":desc,"amount":amount,"value":value});
     setlist(list);
 }
-
 function setUpdate (id){
     var obj = list[id];
     document.getElementById("desc").value = obj.desc;
@@ -57,6 +62,7 @@ function setUpdate (id){
 }
 
 function resetForm(){
+    document.getElementById("errors").style.display = "none";
     document.getElementById("desc").value = "";
     document.getElementById("amount").value = "";
     document.getElementById("value").value = "";
@@ -64,9 +70,13 @@ function resetForm(){
     document.getElementById("btnAdd").style.display = "inline-block";
 
     document.getElementById("inputIDUpdate").innerHTML = "";
+    document.getElementById("errors").style.display = "none";
 }
  
 function updateData(){
+    if(!validation()){
+        return;
+    }
     var id = document.getElementById("idupdate").value;
     var desc = document.getElementById("desc").value;
     var amount = document.getElementById("amount").value;
@@ -93,5 +103,45 @@ function updateData(){
         }
     }
 
+function validation (){
+
+    var desc = document.getElementById("desc").value;
+    var amount = document.getElementById("amount").value;
+    var value = document.getElementById("value").value;
+    var errors = "";
+    console.log(desc, amount, value)
+    document.getElementById("errors").style.display = "none";
+    if(desc === ""){
+        errors += '<p>fill out description</p>';}
+    if(amount === ""){
+        errors += '<p>fill out a quantity</p>';
+    }else if(amount != parseInt(amount)){
+        errors += '<p>fill out a valid amount</p>';
+    }
+    if(value === ""){
+        errors += '<p>fill out a value</p>';
+    }else if(value != parseFloat(value)){
+        errors += '<p>fill out a valid value</p>';
+    }
+
+    console.log(errors)
+    if(errors !== ""){
+       document.getElementById("errors").style.display = "block";
+       document.getElementById("errors").style.backgroundColor = "rgba(85, 85, 85, 0.3)";
+       document.getElementById("errors").style.color = "black";
+       document.getElementById("errors").style.margin = "10px";
+       document.getElementById("errors").style.padding = "10px";
+       document.getElementById("errors").style.borderRadius = "13px";
+       
+       document.getElementById("errors").innerHTML = "<h3>error:</h3>" + errors;
+        return 0;
+    }else{
+        return 1;
+    }
+
+
+    
+}
+
+
 setlist(list);
-console.log(getTotal(list));
